@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import Post, { IPost } from '../models/Post.js';
-import User from '../models/User.js';
+import User, { IUser } from '../models/User.js';
 
 interface IPostController {
     ['@path']:string;
@@ -21,9 +21,9 @@ export class PostController implements IPostController {
         try
         {
             const { userId, description, picturePath }:Pick<IPost, 'userId' | 'description' | 'picturePath'> = req.body;
-            const user = await User.findById(userId);
+            const user:IUser | null = await User.findById(userId).lean();
 
-            if(!user)
+            if(user == null)
             {
                 res.status(404).json({msg: 'User was not found'});
                 return;
@@ -57,7 +57,7 @@ export class PostController implements IPostController {
     getFeedPosts = async (req:Request, res:Response) => {
         try
         {
-            const posts = Post.find();
+            const posts: IPost[] = await Post.find().lean();
             res.status(200).json(posts);
         }
         catch(error)
@@ -70,7 +70,7 @@ export class PostController implements IPostController {
         try
         {
             const { userId } = req.params;
-            const posts = await Post.find({userId:userId});
+            const posts:IPost[] = await Post.find({userId:userId}).lean();
             res.status(200).json(posts);
         }
         catch(error)
@@ -79,7 +79,6 @@ export class PostController implements IPostController {
         };
     };
     
-
     likePost = async (req:Request, res:Response) => {
         try
         {
@@ -113,6 +112,6 @@ export class PostController implements IPostController {
         {
             res.status(404).json({error: error instanceof Error ? error.message : error});
         }
-    }
+    };
 
 }

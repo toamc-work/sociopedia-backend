@@ -9,8 +9,8 @@ export class PostController {
     createPost = async (req, res) => {
         try {
             const { userId, description, picturePath } = req.body;
-            const user = await User.findById(userId);
-            if (!user) {
+            const user = await User.findById(userId).lean();
+            if (user == null) {
                 res.status(404).json({ msg: 'User was not found' });
                 return;
             }
@@ -35,7 +35,7 @@ export class PostController {
     };
     getFeedPosts = async (req, res) => {
         try {
-            const posts = Post.find();
+            const posts = await Post.find().lean();
             res.status(200).json(posts);
         }
         catch (error) {
@@ -46,7 +46,7 @@ export class PostController {
     getUserPosts = async (req, res) => {
         try {
             const { userId } = req.params;
-            const posts = await Post.find({ userId: userId });
+            const posts = await Post.find({ userId: userId }).lean();
             res.status(200).json(posts);
         }
         catch (error) {

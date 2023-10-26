@@ -1,4 +1,4 @@
-import User from 'models/User.js';
+import User from '../models/User.js';
 import _ from 'lodash';
 export class UserController {
     '@path';

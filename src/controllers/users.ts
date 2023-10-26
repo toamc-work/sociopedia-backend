@@ -1,6 +1,5 @@
 import {Request, Response} from 'express-serve-static-core';
-import User, { IUser } from 'models/User.js';
-import { Document } from 'mongoose';
+import User, { IUser } from '../models/User.js';
 import _ from 'lodash'
 
 interface IUserController {

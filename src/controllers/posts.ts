@@ -1,7 +1,6 @@
 import {Request, Response} from 'express';
-import Post, { IPost } from 'models/Post.js';
-import { Document } from 'mongoose';
-import User from 'models/User.js';
+import Post, { IPost } from '../models/Post.js';
+import User from '../models/User.js';
 
 interface IPostController {
     ['@path']:string;

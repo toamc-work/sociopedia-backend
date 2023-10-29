@@ -25,7 +25,7 @@ export class AuthController {
                 impressions: Math.floor(Math.random() * 10000),
             });
             const saveUser = await newUser.save();
-            res.status(201).json(saveUser);
+            res.status(201).json(_.omit(saveUser, 'password'));
         }
         catch (error) {
             res.status(500).json({ error: error instanceof Error ? error.message : error });

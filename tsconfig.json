@@ -16,7 +16,7 @@
   },
   "include": [
       "src/**/*.ts", // Include TypeScript files in the "src" directory and its subdirectories
-      "src/**/*.d.ts" // Include TypeScript declaration files (if any)
+      "src/**/*.d.ts", // Include TypeScript declaration files (if any)
   ],
   "exclude": [
       "node_modules" // Exclude the "node_modules" directory from TypeScript compilation

@@ -52,7 +52,7 @@ export class AuthController implements IAuthController {
             });
 
             const saveUser = await newUser.save();
-            res.status(201).json(saveUser);
+            res.status(201).json(_.omit(saveUser, 'password'));
         }
         catch(error)
         {

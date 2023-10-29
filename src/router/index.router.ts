@@ -1,4 +1,3 @@
-debugger
 import {Router} from 'express';
 import authRouter from './auth.js';
 import postRouter from './posts.js';

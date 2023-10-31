@@ -1,6 +1,7 @@
 import {Request, Response} from 'express-serve-static-core';
 import User, { IUser } from '../models/User.js';
 import _ from 'lodash'
+import { Document } from 'mongoose';
 
 interface IUserController {
     ['@path']:string;
@@ -40,21 +41,20 @@ export class UserController implements IUserController {
                 return;
             }
             
-            type IFriend = Pick<IUser, '_id'| 'email'| 'firstName'| 'lastName'| 'location'| 'occupations'>;
+            type IFriend = Pick<IUser, '_id'| 'email'| 'firstName'| 'lastName'| 'location'| 'occupations' | 'picturePath'>;
             type IFriendFields = (keyof IFriend)[];
 
-            const friendFields: IFriendFields = ['_id', 'email', 'firstName', 'lastName', 'location', 'occupations'];
-
-
+            const friendFields: IFriendFields = ['_id', 'email', 'firstName', 'lastName', 'location', 'occupations', 'picturePath'];
 
 
             const friends: IFriend[] = _.compact(
                 await Promise.all(
-                    user.friends.map((id): Promise<IFriend | null> =>
-                        User.findById(id).select(friendFields).lean().exec()
+                    user.friends.map((friendId): Promise<IFriend | null> =>
+                        User.findById(friendId).select(friendFields).lean().exec()
                     )
                 ));
 
+            console.log(friends)
 
             res.status(200).json(friends);
         }
@@ -74,27 +74,41 @@ export class UserController implements IUserController {
 
             const friendFields: IFriendFields = ['_id', 'email', 'firstName', 'lastName', 'location', 'occupations', 'picturePath'];
 
-            const user:IUser | null = await User.findById(id).lean();
-            const friend:IUser | null = await User.findById(friendId).lean();
+            const userDoc:Document<IUser> | null = await User.findById(id);
+            const friendDoc:Document<IUser> | null = await User.findById(friendId);
 
-            if(!user || !friend)
+            if(!userDoc || !friendDoc)
             {
                 res.status(404).json({msg: "User was not found"});
                 return;
             }
 
-            if(user.friends.includes(friendId)) {
-                user.friends = user.friends.filter(id => friendId);
-                friend.friends = friend.friends.filter(identifier => id == identifier);
+            const user:IUser = userDoc.toObject();
+            const friend:IUser = friendDoc.toObject();
+
+            const isFriend = user.friends.some(identifier => identifier === friendId);
+            console.log({isFriend});
+            if(isFriend)
+            {
+                // Remove Friend From the list!
+                user.friends = user.friends.filter(identifier => identifier != friendId);
+                friend.friends = friend.friends.filter(identifier => identifier != id);
+                userDoc.overwrite({...user, friends: user.friends});
+                friendDoc.overwrite({...friend, friends: friend.friends})
             }
             else
             {
-                user.friends.push(friendId);
-                friend.friends.push(id);
+                // Add Friend to the list!
+                user.friends.push(String(friend._id));
+                friend.friends.push(String(user._id));
+
+                userDoc.overwrite({...user, friends: user.friends});
+                friendDoc.overwrite({...friend, friends: friend.friends})
             }
 
-            await (new User(user)).save();
-            await (new User(friend)).save();
+            // Save the new updated Data in this docs
+            await userDoc.save();
+            await friendDoc.save();
             
             const friends: IFriend[] = _.compact(
                 await Promise.all(

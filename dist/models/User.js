@@ -28,7 +28,7 @@ const UserSchema = new Schema({
         default: "",
     },
     friends: {
-        type: [],
+        type: [String],
         default: [],
     },
     location: Schema.Types.String,

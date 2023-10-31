@@ -7,7 +7,7 @@ export interface IUser{
     email:string;
     password:string;
     picturePath:string;
-    friends: any[];
+    friends: string[];
     location:string;
     occupations:string;
     viewedProfile:number;
@@ -45,7 +45,7 @@ const UserSchema:Schema<IUser & Document> = new Schema(
             default: "",
         },
         friends: {
-            type: [],
+            type: [String],
             default: [],
         },
 
@@ -55,6 +55,7 @@ const UserSchema:Schema<IUser & Document> = new Schema(
         impressions: Schema.Types.Number,
     }, { timestamps:true }
 );
+
 
 const User = mongoose.model('User', UserSchema)
 

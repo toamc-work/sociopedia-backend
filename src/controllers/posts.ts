@@ -35,6 +35,7 @@ export class PostController implements IPostController {
                 lastName:user.lastName,
                 location:user.location,
                 description:description,
+                picturePath:picturePath,
                 userPicturePath:user.picturePath,
                 likes: {},
                 comments: []
@@ -88,14 +89,15 @@ export class PostController implements IPostController {
 
             if(post == null) throw new Error('User was not found');
 
-            const isLiked = post.likes.get(userId);
+            console.log(post.likes);
+            const isLiked = post.likes[userId];
 
             if(isLiked) {
-                post.likes.delete(userId);
+                delete post.likes[userId]
             }
             else
             {
-                post.likes.set(userId, true);
+                post.likes[userId] = true;
             };
 
             const updatePost = await Post.findByIdAndUpdate(
@@ -106,7 +108,6 @@ export class PostController implements IPostController {
 
             res.status(200).json(updatePost);
 
-            res.status(200).json();
         }
         catch(error)
         {

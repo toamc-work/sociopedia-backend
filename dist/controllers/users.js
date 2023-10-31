@@ -29,12 +29,13 @@ export class UserController {
             res.status(200).json(friends);
         }
         catch (error) {
+            res.status(500).json({ error: error instanceof Error ? error.message : error });
         }
     };
     addRemoveFriend = async (req, res) => {
         try {
             const { id, friendId } = req.params;
-            const friendFields = ['_id', 'email', 'firstName', 'lastName', 'location', 'occupations'];
+            const friendFields = ['_id', 'email', 'firstName', 'lastName', 'location', 'occupations', 'picturePath'];
             const user = await User.findById(id).lean();
             const friend = await User.findById(friendId).lean();
             if (!user || !friend) {

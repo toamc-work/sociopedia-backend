@@ -9,8 +9,8 @@ export interface IPost {
     description:string;
     picturePath:string;
     userPicturePath:string;
-    likes:Map<string, boolean>;
-    comments:[]
+    likes:{[key:string]: boolean};
+    comments:string[]
 }
 
 
@@ -28,6 +28,11 @@ const PostSchema:Schema<IPost & Document> = new Schema(
             type:Schema.Types.String,
             required:true,
         },
+        comments: {
+            type: [String], 
+            required: true,
+            default: [],
+        },
         location:String,
         description:String,
         picturePath:String,
@@ -35,10 +40,6 @@ const PostSchema:Schema<IPost & Document> = new Schema(
         likes: {
             type:Map,
             of:Boolean,
-        },
-        comments: {
-            types: Array,
-            default: [],
         }
     }, { timestamps: true }
 );

@@ -16,14 +16,24 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(cors({
+    methods: ['POST', 'GET', 'DELETE', 'PATCH']
+}));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({policy: 'cross-origin'}));
 app.use(morgan("common"));
 app.use(bodyParser.json({limit: "30mb"}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
-app.use(cors());
+
 console.log(path.join(__dirname, 'public/assets'));
 app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
+app.use("*", (req ,res, next) => {
+    console.log("method", req.method)
+    console.log("url", req.url)
+    console.log("baseUrl", req.baseUrl)
+    console.log("originalUrl", req.originalUrl)
+    next()
+})
 app.use('/api', router)
 
 

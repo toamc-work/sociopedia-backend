@@ -60,7 +60,7 @@ export class UserController implements IUserController {
         }
         catch(error)
         {
-
+            res.status(500).json({error: error instanceof Error ? error.message : error});
         }
     };
 
@@ -69,10 +69,10 @@ export class UserController implements IUserController {
         {
             const {id, friendId} = req.params;
 
-            type IFriend = Pick<IUser, '_id'| 'email'| 'firstName'| 'lastName'| 'location'| 'occupations'>;
+            type IFriend = Pick<IUser, '_id'| 'email'| 'firstName'| 'lastName'| 'location'| 'occupations' | 'picturePath'>;
             type IFriendFields = (keyof IFriend)[];
 
-            const friendFields: IFriendFields = ['_id', 'email', 'firstName', 'lastName', 'location', 'occupations'];
+            const friendFields: IFriendFields = ['_id', 'email', 'firstName', 'lastName', 'location', 'occupations', 'picturePath'];
 
             const user:IUser | null = await User.findById(id).lean();
             const friend:IUser | null = await User.findById(friendId).lean();
